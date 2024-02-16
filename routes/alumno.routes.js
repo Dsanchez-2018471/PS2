@@ -1,16 +1,8 @@
 const { Router } = require('express');
-const { check } = require('express-validator');
-
-const { validarCampos } = require('../middlewares/validar-campos');
-
-const {
-    alumnoPost,
-    getAlumnoById,
-    alumnoGet,
-    putAlumno,
-    animalesDelete
-} = require('../controllers/alumno.controller');
-const { existeAnimalById } = require('../helpers/db-validators');
+const { check } = require('express-validator')
+const { validarCampos } = require('../middlewares/validar-campos')
+const { alumnoPost, putAlumno, getAlumnoById, alumnoGet, alumnoDelete } = require('../controllers/alumno.controller');
+const { esRoleValido, existenteEmail, existeAlumnoById } = require('../helpers/db-validators');
 
 const router = Router();
 
@@ -19,34 +11,44 @@ router.get("/", alumnoGet);
 router.get(
     "/:id",
     [
-        check('id', 'No es un id valido').isMongoId(),
-        check('id').custom(existeAnimalById),
+        check('id', 'no es un id valido').isMongoId(),
+        check('id').custom(existeAlumnoById),
         validarCampos
-    ], getAlumnoById)
+    ], getAlumnoById
+);
+
+
 
 router.put(
     "/:id",
     [
-        check('id', 'no es un id valido').isMongoId(),
-        check('id').custom(existeAnimalById),
+        check('id', 'No es un id valido').isMongoId(),
+        check('id').custom(existeAlumnoById),
+        check("correo", "Este no es un correo valido").isEmail(),
+        check("correo").custom(existenteEmail),
+        check("role").custom(esRoleValido),
         validarCampos
-    ], putAlumno)
+    ], putAlumno
+);
 
 router.post(
     "/",
     [
-        check("nombre", "El nombre no puede ir vacio").not().isEmpty(),
-        check("edad", "la edad debe de ser menor a 20 años").not().isEmpty(),
-        check("tipo", "el tipo de animal no es valido").not().isEmpty(),
+        check("nombre", "el nombre no puede ir vacio"),
+        check("password", "la password debe ser mayor a 8 digitos").isLength({ min: 6 }),
+        check("correo", "Este no es un correo valido").isEmail(),
+        check("correo").custom(existenteEmail),
+        check("role").custom(esRoleValido),
         validarCampos,
-    ], alumnoPost);
+    ], alumnoPost
+);
 
 router.delete(
     "/:id",
     [
-        check('id', 'no es un id valido').isMongoId(),
-        check('id').custom(existeAnimalById),
+        check("id", "No es un id valido").isMongoId(),
+        check('id').custom(existeAlumnoById),
         validarCampos
-    ], animalesDelete);
-
-module.exports = router;
+    ], alumnoDelete
+);
+module.exports = router; 
