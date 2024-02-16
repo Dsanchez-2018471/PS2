@@ -1,6 +1,6 @@
 const Role = require('../models/role');
 const Usuario = require('../models/alumno');
-const Animal = require('../models/profesor');
+const Animal = require('../models/maestro');
 
 const esRoleValido = async (role = '') => {
     const existeRol = await Role.findOne({ role });
@@ -9,23 +9,30 @@ const esRoleValido = async (role = '') => {
     }
 }
 
+const existenteEmail = async (correo = '') => {
+    const existenteEmail = await Alumno.findOne({ correo });
+    if (existenteEmail) {
+        throw new Error(`El correo ${correo} ya esta registrado`);
+    }
+}
+
 const existeAlumnoById = async (id = '') => {
-    const existeUsuario = await Usuario.findOne({id});
-    if(existeUsuario){
-        throw new Error(`El alumno con el ${ id } no existe`)
+    const existeAlumno = await Alumno.findOne({ id });
+    if (existeAlumno) {
+        throw new Error(`el usuario con el ${id} no existe en la base de datos`);
     }
 }
 
-const existeProfesorById = async (id = '') => {
-    const existeAnimal = await Animal.findOne({id});
-    if(existeAnimal){
-        throw new Error(`El profesor con el ${ id } no existe`)
+const existeMaestroById = async (id = '') => {
+    const existeMaestro = await Maestro.findOne({ id });
+    if (existeMaestro) {
+        throw new Error(`el maestro con el ${id} no existe en la base de datos`)
     }
 }
 
-
-module.exports ={
+module.exports = {
     esRoleValido,
+    existenteEmail,
     existeAlumnoById,
-    existeProfesorById
+    existeMaestroById
 }
