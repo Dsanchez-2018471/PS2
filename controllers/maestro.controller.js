@@ -18,3 +18,51 @@ const maestroGet = async (req, res = response) =>{
         maestros
     })
 }
+
+const getMaestroById = async(req, res) =>{
+    const {id} = req.params;
+    const  maestro = await Maestro.findOne({_id : id });
+
+    res.status(200).json({
+        maestro
+    })
+}
+
+const putMaestro = async(req, res = response) =>{
+    const {id} = req.params;
+    const {_id, password, ...resto } = req.body;
+
+    if(password){
+        const salt = bcryptjs.genSaltSync();
+        resto.password = bcryptjs.hashSync(password,salt);
+    }
+
+    await Maestro.findByIdAndUpdate(id, resto);
+
+    const maestro = await Maestro.findOne({_id: id});
+
+    res.status(200).json({
+        msg: 'se hizo cambios',
+        maestro
+    });
+}
+
+const maestroPost = async (req, res) =>{
+    const {nombre, correo, password, curso, role} = req.body;
+    const maestro = new Maestro({nombre, correo, password, curso, role});
+
+    const salt = bcryptjs.genSaltSync();
+    maestro.password = bcryptjs.hashSync(password, salt);
+
+    await maestro.save();
+    res.status(202).json({
+        maestro
+    });
+}
+
+module.exports = {
+    maestroPost,
+    maestroGet,
+    getMaestroById,
+    putMaestro
+}
