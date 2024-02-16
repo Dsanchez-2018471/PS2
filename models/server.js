@@ -6,9 +6,10 @@ class Server{
 
     constructor(){
         this.app = express();
-        this.port = process.env.PORT; 
-        this.profesorPath = '/api/profesor';
-        this.alumnoPath = '/api/alumno';
+        this.port  = process.env.PORT;
+        this.alumnoPath = '/api/alumnos';
+        this.maestroPath = '/api/maestros';
+
         this.conectarDB();
         this.middlewares();
         this.routes();
@@ -27,13 +28,13 @@ class Server{
     }
 
     routes(){
-        this.app.use(this.profesorPath, require("../routes/profesor.routes"));
-        this.app.use(this.alumnoPath ,require("../routes/alumno.routes"));
+        this.app.use(this.alumnoPath, require('../routers/alumno.routes')),
+        this.app.use(this.maestroPath ,require('../routers/maestro.routes'))
     }
 
     listen(){
         this.app.listen(this.port, () =>{
-            console.log('servidor ejecuntandose y escuchandose el puerto', this.port)
+            console.log('Servidor ejecutandose y escuchando el puerto', this.port)
         });
     }
 }
